@@ -2,57 +2,74 @@ class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      flag: true,
       data: window.exampleVideoData,
       videos: window.exampleVideoData[0],
       options: {
-        query: 'cats',
+        query: 'monkeys',
         max: 5,
         key: 'AIzaSyBbAYqDY8BOJD58Z970pm6L6fKHG9jE3Ms',
       },
     }
-    // console.log(this.state.videos)
-  //this.videoOnClick = this.videoOnClick.bind(this)
   }
+
   videoOnClick (video) {
     this.setState({
       videos: video,
     })
   }
+
   componentDidMount() {
-    searchYouTube(this.state.options, this.loadYouTube.bind(this) )
+    searchYouTube(this.state.options, this.loadYouTube.bind(this));
   }
+
   loadYouTube(youTubeData) {
-    console.log(youTubeData)
     this.setState({
       data: youTubeData,
     })
     this.setState({
       videos: youTubeData[0],
     })
+    setTimeout(() => {
+      this.setState({
+        flag: true,
+      })
+    }, 500);
   }
+
   querySearch(event) {
     var result = $("#search").val();
+    var options = {
+      query: result,
+      max: 5,
+      key: 'AIzaSyBbAYqDY8BOJD58Z970pm6L6fKHG9jE3Ms',
+    }
+    if (this.state.flag) {
+      searchYouTube(options, this.loadYouTube.bind(this));
+    }
     this.setState({
-      options: {
-        query: result,
-        max: 5,
-        key: 'AIzaSyBbAYqDY8BOJD58Z970pm6L6fKHG9jE3Ms',
-      },
+      lag: false,
     })
     $("#search").val('');
-    searchYouTube(this.state.options, this.loadYouTube.bind(this) )
-    console.log('event', result)
-    console.log(this.state.options)
+  }
+
+  typeSearch() {
+    var result = $("#search").val();
+    var options = {
+      query: result,
+      max: 5,
+      key: 'AIzaSyBbAYqDY8BOJD58Z970pm6L6fKHG9jE3Ms',
+    }
+    searchYouTube(options, this.loadYouTube.bind(this));
   }
 
   render () {
     return (
 		  <div>
-		    <Nav querySearch={this.querySearch.bind(this)}/>
+		    <Nav querySearch={this.querySearch.bind(this)} typeSearch={this.typeSearch.bind(this)}/>
 			  <div className="col-md-7">
 		  	  <VideoPlayer video={this.state.videos} />
 		    </div>
-
 			  <div className="col-md-5">
 		  	 <VideoList videoOnClick={this.videoOnClick.bind(this)} videos={this.state.data} />
 			  </div>
