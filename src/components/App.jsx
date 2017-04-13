@@ -4,8 +4,13 @@ class App extends React.Component {
     this.state = {
       data: window.exampleVideoData,
       videos: window.exampleVideoData[0],
+      options: {
+        query: 'cats',
+        max: 5,
+        key: 'AIzaSyBbAYqDY8BOJD58Z970pm6L6fKHG9jE3Ms',
+      },
     }
-    console.log(this.state.videos)
+    // console.log(this.state.videos)
   //this.videoOnClick = this.videoOnClick.bind(this)
   }
   videoOnClick (video) {
@@ -13,12 +18,37 @@ class App extends React.Component {
       videos: video,
     })
   }
-
+  componentDidMount() {
+    searchYouTube(this.state.options, this.loadYouTube.bind(this) )
+  }
+  loadYouTube(youTubeData) {
+    console.log(youTubeData)
+    this.setState({
+      data: youTubeData,
+    })
+    this.setState({
+      videos: youTubeData[0],
+    })
+  }
+  querySearch(event) {
+    var result = $("#search").val();
+    this.setState({
+      options: {
+        query: result,
+        max: 5,
+        key: 'AIzaSyBbAYqDY8BOJD58Z970pm6L6fKHG9jE3Ms',
+      },
+    })
+    $("#search").val('');
+    searchYouTube(this.state.options, this.loadYouTube.bind(this) )
+    console.log('event', result)
+    console.log(this.state.options)
+  }
 
   render () {
     return (
 		  <div>
-		    <Nav />
+		    <Nav querySearch={this.querySearch.bind(this)}/>
 			  <div className="col-md-7">
 		  	  <VideoPlayer video={this.state.videos} />
 		    </div>
